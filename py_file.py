@@ -21,6 +21,11 @@ import inspect
 import subprocess
 # for regular expression
 import re
+# copy file
+from shutil import copyfile
+
+import configparser
+
 
 # all func 20191017
 # ..................................................................
@@ -202,6 +207,125 @@ def runFindSpecFileExtention(sXmlPath, inParameter, sPath, bBrife):
         print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
     return 0
 
+
+def runFindSpecFileExtention_SpecIni(sXmlPath, inParameter, sPath):
+    print('{} go'.format( inspect.currentframe().f_code.co_name))
+    try:
+        # 
+        # sExtendName = ".txt,.ini,.dll,.exe,.lib,.log"
+        sExtendName = inParameter
+        lFileExt = makeFileExtenInfoEx(sExtendName)
+        # 
+        listFileFrom = buildFileDateInfo(sPath)
+
+        # sort by date 
+        listFileFrom = sorted(listFileFrom,  key=itemgetter(1)) # order by modify date 
+
+        iIndex = 0
+        iFileInfoSize = len(listFileFrom)
+        listFileName = []
+        while iFileInfoSize > 0:
+            iFileInfoSize -= 1
+
+            if(findListFileExtention( listFileFrom[iFileInfoSize][0], lFileExt) ==0): 
+            # listFileFrom[iFileInfoSize][0] = file name
+            # listFileFrom[iFileInfoSize][1] = modify date
+                sFullPathSrc = os.path.join(sPath, listFileFrom[iFileInfoSize][0])     
+                local_time = time.ctime(listFileFrom[iFileInfoSize][1]) 
+                fSize = listFileFrom[iFileInfoSize][2]
+
+                # get file name 
+                fName = os.path.basename(listFileFrom[iFileInfoSize][0])
+
+                # get folder name
+                folderName = os.path.split(os.path.dirname(sFullPathSrc))[-2]
+                folderName =  os.path.split(folderName)[1]
+
+                # remove file extension
+                fName = os.path.splitext(fName)[0]
+                
+                if (fName.find("RDT") == - 1) and (fName.find("QC") == - 1) \
+                    and (fName.find("Test") == - 1) and (fName.find("Default") == - 1) \
+                    and (fName.find("TEST") == - 1):
+
+                    # tupleFileInfo[0] = file name
+                    # tupleFileInfo[1] = folder name
+                    # tupleFileInfo[2] = file path                    
+                    sFullPathSrcRemoveFile = os.path.dirname(os.path.abspath(sFullPathSrc))
+                    tupleFileInfo = (fName, folderName, sFullPathSrcRemoveFile)
+                    listFileName.append(tupleFileInfo)
+                    # printf(tupleFileInfo)
+                    print('{:<4d}, {:<50s}'.format(iIndex, fName))
+
+
+                iIndex += 1
+        print(listFileName)                
+        print('{:<10s}runFindSpecFileExtention_SpecIni..'.format('End'))
+    except:             
+        print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
+    return listFileName    
+
+
+# 1.get specfic ini name and path from [runFindSpecFileExtention_SpecIni]
+# 2.copy ini template to each folder
+# 3.update ini item Config_Type for each file
+def runCopyIniPatternToEachFolder(sXmlPath, inParameter, sPath):
+    print('{} go'.format( inspect.currentframe().f_code.co_name))
+    try:
+        listFileFrom  = runFindSpecFileExtention_SpecIni(sXmlPath, inParameter, sPath)
+        ilistFileFromSize = len(listFileFrom)
+
+        sIniSamplePath = "D:\\Yeestor_PC\\YS_Auto\\python_local_git\\Bin\\B16A_512GB_QC.ini"
+
+        # copyfile(sIniSamplePath, "newName")
+        while ilistFileFromSize > 0:
+            ilistFileFromSize -= 1
+            # listFileFrom[ilistFileFromSize][0], file name
+            # listFileFrom[ilistFileFromSize][1], folder name
+            # listFileFrom[ilistFileFromSize][2], file path
+            print('{}, {}, {}'.format(listFileFrom[ilistFileFromSize][0], \
+                listFileFrom[ilistFileFromSize][1], \
+                listFileFrom[ilistFileFromSize][2]))
+
+            DesIniName = listFileFrom[ilistFileFromSize][0] + "_QC.ini"
+            DesPath = os.path.join(listFileFrom[ilistFileFromSize][2], DesIniName)   
+            print('DesPath = {}'.format(DesPath))
+
+            if os.path.exists(DesPath):
+                os.remove(DesPath)            
+            copyDonePath = copyfile(sIniSamplePath, DesPath)
+            print('Copy done, DesPath = {}'.format(copyDonePath))
+
+            # need to update ini item
+            # [OtherSetting]
+            # Config_Type=Micron_B16A_512G      
+
+            # remove last char "B" (from 512GB -> 512G)
+            sRemoveB =  listFileFrom[ilistFileFromSize][0]
+            sRemoveB = sRemoveB[:-1]
+            print('sRemoveB = {}'.format(sRemoveB))
+
+            newIniValue = listFileFrom[ilistFileFromSize][1] + "_" + sRemoveB
+            print('newIniValue = {}'.format(newIniValue))
+            config = configparser.ConfigParser()
+
+            # keep upper/lower case
+            config.optionxform=str
+            config.read(copyDonePath)
+            config.set("OtherSetting", "Config_Type", newIniValue)
+            section_a_Value = config.get('OtherSetting', 'Config_Type')
+            print('after section_a_Value = {}'.format(section_a_Value))
+
+            # save file
+            config.write(open(copyDonePath, 'w'))
+
+        print('{:<10s}runCopyIniPatternToEachFolder..'.format('End'))
+    except:             
+        print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
+    return 0    
+
+ 
+
 # REX 20191014
 # detect file encoding
 def runGetFileEncoding(sXmlPath, inParameter, sPath):
@@ -358,7 +482,11 @@ def runXMLItem(testName, xmlPath, inPara, sPath):
         if ( testName == 'FindSpecFileExtention'):
             runFindSpecFileExtention(xmlPath, inPara, sPath, 0)
         if ( testName == 'FindSpecFileExtention_Brief'):
-            runFindSpecFileExtention_Brief(xmlPath, inPara, sPath, 1)            
+            runFindSpecFileExtention_Brief(xmlPath, inPara, sPath, 1)
+        if ( testName == 'FindSpecFileExtention_SpecIni'):
+            runFindSpecFileExtention_SpecIni(xmlPath, inPara, sPath)
+        if ( testName == 'CopyIniPatternToEachFolder'):
+            runCopyIniPatternToEachFolder(xmlPath, inPara, sPath)                                      
         if ( testName == 'GetFileEncoding'):
             runGetFileEncoding(xmlPath, inPara, sPath)  
         if ( testName == 'GetLibFunc'):
@@ -427,11 +555,11 @@ def showXMLTable():
         index = 1
         tableSize = len (gXMLTable)
 
-        print ('{:.<4s}{:.<30s}, {:.<80s}, {}'.format('No','testName', 'testPath', 'testState'))
+        print ('{:.<4s}{:.<40s}, {:.<80s}, {}'.format('No','testName', 'testPath', 'testState'))
         while index < tableSize:
             # print ('{:<4d}{:<30s}, {:<80s}, {}'.format(ListCount, testName, testPath, testState))
 
-            print('{:<4d}{:<30s}, {:<80s}, {}'.format
+            print('{:<4d}{:<40s}, {:<80s}, {}'.format
                 (gXMLTable[index][0], 
                     gXMLTable[index][1],
                     gXMLTable[index][4],

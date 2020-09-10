@@ -12,8 +12,11 @@
 			<!--remove spcific file-->
 			<!--.txt,.ini,.lib,.log-->
 			<!--D:\\Yeestor_PC\YS_Git\worktest\svn_sync\svn_spi\SRCwc\Lib"-->
+			
 			<Item Name="FindSpecFileExtention"  Param=".ini,.txt,.log" 	Path = "D:\\ASolid_PC\ASolid_SSD\work_test\python_ini_read\INI_files" Enabled="FALSE"/>			
-			<Item Name="FindSpecFileExtention_Brief"  Param=".ini" 	Path = "D:\\ASolid_PC\ASolid_SSD\work_test\python_ini_read\INI_files" Enabled="FALSE"/>			
+			<Item Name="FindSpecFileExtention_Brief"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
+			<Item Name="FindSpecFileExtention_SpecIni"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
+			<Item Name="CopyIniPatternToEachFolder"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
 			<Item Name="GetFileEncoding"  		Param=".ini" 		Path = "D:\\ASolid_PC\ASolid_SSD\work_test\Libra_Release20200909" Enabled="FALSE"/>			
 			<Item Name="GetLibFunc" 	 		Param=".lib" 		Path = "D:\\Yeestor_PC\YS_Git\worktest\svn_sync\svn_spi\SRCwc\Lib" Enabled="TRUE"/>			
 			
