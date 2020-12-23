@@ -17,12 +17,16 @@
 			<Item Name="FindSpecFileExtention_Brief"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
 			<Item Name="FindSpecFileExtention_SpecIni"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
 			<Item Name="CopyIniPatternToEachFolder"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
+			<Item Name="FindINI_InsertLine"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
+			<Item Name="ChkMissQCINI"  Param=".ini" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\Bin" Enabled="FALSE"/>			
+			
 			<Item Name="GetFileEncoding"  		Param=".ini" 		Path = "D:\\ASolid_PC\ASolid_SSD\work_test\Libra_Release20200909" Enabled="FALSE"/>			
 			<Item Name="GetLibFunc" 	 		Param=".lib" 		Path = "D:\\Yeestor_PC\YS_Git\worktest\svn_sync\svn_spi\SRCwc\Lib" Enabled="TRUE"/>			
 			
 			<Item Name="Decrypt_Log"  			Param="1"  			Path = "D:\\Yeestor_PC\Chrome_DL\trunk\bin\UI_3\log" Enabled="FALSE"/>		
 			<Item Name="ParseTxt"  				Param="1" 			Path = "D:\\Yeestor_PC\YS_Auto\python_local_git\path.txt" 				Enabled="FALSE"/>		
 			<Item Name="GetFileEncoding"  		Param=".lib,.exe" 	Path = "D:\\Yeestor_PC\YS_Git\worktest\svn_sync\svn_spi\SRCwc\bin\U3\Dll" Enabled="FALSE"/>			
+			<Item Name="Make4KFile"  			Param="4k.bin" 	Path = "D:\\Yeestor_PC\YS_Auto\python_local_git" Enabled="FALSE"/>
 			<Item Name="Pause" Enabled="FALSE"/>
 			
 

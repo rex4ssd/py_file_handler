@@ -260,7 +260,7 @@ def runFindSpecFileExtention_SpecIni(sXmlPath, inParameter, sPath):
 
                 iIndex += 1
         print(listFileName)                
-        print('{:<10s}runFindSpecFileExtention_SpecIni..'.format('End'))
+        print('{} End'.format(inspect.currentframe().f_code.co_name))
     except:             
         print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
     return listFileName    
@@ -319,12 +319,117 @@ def runCopyIniPatternToEachFolder(sXmlPath, inParameter, sPath):
             # save file
             config.write(open(copyDonePath, 'w'))
 
-        print('{:<10s}runCopyIniPatternToEachFolder..'.format('End'))
+        print('{} End'.format(inspect.currentframe().f_code.co_name))
+    except:             
+        print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
+    return 0    
+
+
+# 1.get specfic ini name and path from [runFindSpecFileExtention_SpecIni]
+# 2.Update Ini section [ProductionParam]
+def runFindINI_InsertLine(sXmlPath, inParameter, sPath):
+    print('{} go'.format( inspect.currentframe().f_code.co_name))
+    try:
+        listFileFrom  = runFindSpecFileExtention_SpecIni(sXmlPath, inParameter, sPath)
+        ilistFileFromSize = len(listFileFrom)
+
+        # sIniSamplePath = "D:\\Yeestor_PC\\YS_Auto\\python_local_git\\Bin\\B16A_512GB_QC.ini"
+
+        # copyfile(sIniSamplePath, "newName")
+        while ilistFileFromSize > 0:
+            ilistFileFromSize -= 1
+            # listFileFrom[ilistFileFromSize][0], file name
+            # listFileFrom[ilistFileFromSize][1], folder name
+            # listFileFrom[ilistFileFromSize][2], file path
+            print('{}, {}, {}'.format(listFileFrom[ilistFileFromSize][0], \
+                listFileFrom[ilistFileFromSize][1], \
+                listFileFrom[ilistFileFromSize][2]))
+
+            # DesIniName = listFileFrom[ilistFileFromSize][0] + "_QC.ini"
+            DesPath = os.path.join(listFileFrom[ilistFileFromSize][2], listFileFrom[ilistFileFromSize][0])   
+            print('DesPath = {}'.format(DesPath))
+
+            if os.path.exists(DesPath):
+                config = configparser.ConfigParser()
+
+                # keep upper/lower case
+                config.optionxform=str
+                config.read(DesPath)
+
+                # add section
+                # Serial_Num_Begin =SN000000000001000005
+                # Serial_Num_End =SN000000000001000005
+                # Serial_Num_Mask =SN000000000001######
+                # 
+                # config.set("OtherSetting", "Config_Type", newIniValue)
+
+                config.set("ProductionParam", "Serial_Num_Begin", "SN000000000000000001")
+                config.set("ProductionParam", "Serial_Num_End", "SN000000000001000005")
+                config.set("ProductionParam", "Serial_Num_Mask", "SN000000000001######")
+                # save file
+                config.write(open(DesPath, 'w'))                
+                print('write done, DesPath = {}'.format(DesPath))
+            # need to update ini item
+            # [OtherSetting]
+            # Config_Type=Micron_B16A_512G      
+
+
+
+            # newIniValue = listFileFrom[ilistFileFromSize][1] + "_" + sRemoveB
+            # print('newIniValue = {}'.format(newIniValue))
+            # config = configparser.ConfigParser()
+
+            # # keep upper/lower case
+            # config.optionxform=str
+            # config.read(copyDonePath)
+            # config.set("OtherSetting", "Config_Type", newIniValue)
+            # section_a_Value = config.get('OtherSetting', 'Config_Type')
+            # print('after section_a_Value = {}'.format(section_a_Value))
+
+            
+
+        print('{} End'.format(inspect.currentframe().f_code.co_name))
     except:             
         print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
     return 0    
 
  
+# 1.get specfic ini name and path from [runFindSpecFileExtention_SpecIni]
+# 2.check missing  QC.ini file(after doing CopyIniPatternToEachFolder)
+def runChkMissQCINI(sXmlPath, inParameter, sPath):
+    print('{} go'.format( inspect.currentframe().f_code.co_name))
+    try:
+        listFileFrom  = runFindSpecFileExtention_SpecIni(sXmlPath, inParameter, sPath)
+        ilistFileFromSize = len(listFileFrom)
+
+        # sIniSamplePath = "D:\\Yeestor_PC\\YS_Auto\\python_local_git\\Bin\\B16A_512GB_QC.ini"
+
+        # copyfile(sIniSamplePath, "newName")
+        print('\nstart check ini exist..')
+        while ilistFileFromSize > 0:
+            ilistFileFromSize -= 1
+            # listFileFrom[ilistFileFromSize][0], file name
+            # listFileFrom[ilistFileFromSize][1], folder name
+            # listFileFrom[ilistFileFromSize][2], file path
+            # print('{}, {}, {}'.format(listFileFrom[ilistFileFromSize][0], \
+            #     listFileFrom[ilistFileFromSize][1], \
+            #     listFileFrom[ilistFileFromSize][2]))
+
+            DesIniName = listFileFrom[ilistFileFromSize][0] + "_QC.ini"
+            DesPath = os.path.join(listFileFrom[ilistFileFromSize][2], DesIniName)   
+            # print('DesPath = {}'.format(DesPath))
+
+            if not os.path.exists(DesPath):
+                # os.remove(DesPath)    
+                # do notthing
+                print('!not find {}'.format(DesPath))
+            # else:        
+            #     print('! not find {}'.format(DesPath))
+        print('check ini exist done..\n')                
+        print('{} End'.format(inspect.currentframe().f_code.co_name))
+    except:             
+        print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
+    return 0    
 
 # REX 20191014
 # detect file encoding
@@ -474,6 +579,33 @@ def runDecrypt_Log(sXmlPath, inParameter, sPath):
     print('{} End\n '.format( inspect.currentframe().f_code.co_name))
     return 0
 
+# REX20201223
+# create 4k binary file 
+def runMake4KFile(sXmlPath, inParameter, sPath):
+    print('{} go'.format( inspect.currentframe().f_code.co_name))
+    try:
+        sExtendName = inParameter
+        # Mathod 1 : write 4k empty file
+        # with open(sExtendName, "wb") as out:
+        #     out.truncate(4096)
+        #     out.close()
+
+        #  Mathod 2: write 4K with data
+        cur = 0
+        with open(sExtendName, "wb") as out:
+            while cur < 4096 :
+                
+                out.write(bytes((cur % 256,)))
+                
+                print('write 0x{:<04X} done.'.format(cur))
+                cur += 1
+            out.close()
+
+        print('{} end'.format( inspect.currentframe().f_code.co_name))                
+    except:             
+        print ('{}, Unexpected error:{}'.format(inspect.currentframe().f_code.co_name, sys.exc_info()))          
+    return 0
+
 
 def runXMLItem(testName, xmlPath, inPara, sPath):
     print('{} go, testName = {}'.format( inspect.currentframe().f_code.co_name, testName))
@@ -485,8 +617,12 @@ def runXMLItem(testName, xmlPath, inPara, sPath):
             runFindSpecFileExtention_Brief(xmlPath, inPara, sPath, 1)
         if ( testName == 'FindSpecFileExtention_SpecIni'):
             runFindSpecFileExtention_SpecIni(xmlPath, inPara, sPath)
+        if ( testName == 'ChkMissQCINI'):
+            runChkMissQCINI(xmlPath, inPara, sPath) 
         if ( testName == 'CopyIniPatternToEachFolder'):
-            runCopyIniPatternToEachFolder(xmlPath, inPara, sPath)                                      
+            runCopyIniPatternToEachFolder(xmlPath, inPara, sPath)                                                      
+        if ( testName == 'FindINI_InsertLine'):
+            runFindINI_InsertLine(xmlPath, inPara, sPath)                                      
         if ( testName == 'GetFileEncoding'):
             runGetFileEncoding(xmlPath, inPara, sPath)  
         if ( testName == 'GetLibFunc'):
@@ -494,7 +630,9 @@ def runXMLItem(testName, xmlPath, inPara, sPath):
         if ( testName == 'Decrypt_Log'):
             runDecrypt_Log(xmlPath, inPara, sPath)     
         if ( testName == 'ParseTxt'):
-            runParseTxt(xmlPath, inPara, sPath)     
+            runParseTxt(xmlPath, inPara, sPath)   
+        if ( testName == 'Make4KFile'):
+            runMake4KFile(xmlPath, inPara, sPath)               
         if ( testName == 'Pause'):
             runPause()                                                
     except:             
